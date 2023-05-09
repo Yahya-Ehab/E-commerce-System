@@ -1,4 +1,3 @@
-package src;
 public class Item {
     private int id;
     private String name;
@@ -10,5 +9,4 @@ public class Item {
     private int order_id;
     private int admin_id;
     private int status;
-
 }
