@@ -1,5 +1,4 @@
 package src;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,17 +7,18 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 
-public class Order{
+public class UserDB {
+
     private static Connection connect;
-    public Order(){
+    public UserDB(){
         connect = connect();
     }
      /**
      * Connect to a sample database
      */
      public static void createNewTable(){
-        String url = "jdbc:sqlite:./OrderDB.db";
-        String sql = "CREATE TABLE IF NOT EXISTS RESERVE (id integer PRIMARY KEY, name text NOT NULL, capacity real, price double) ";
+        String url = "jdbc:sqlite:./UserDB.db";
+        String sql = "CREATE TABLE IF NOT EXISTS USER (id integer PRIMARY KEY, name text NOT NULL, username text NOT NULL , email text NOT NULL ) ";
          try (Connection conn = DriverManager.getConnection(url);
                 Statement stmt = conn.createStatement()) {
             // create a new table
@@ -29,7 +29,7 @@ public class Order{
     }
     public static Connection connect() {
         // SQLite connection string
-        String url = "jdbc:sqlite:./OrderDB.db";
+        String url = "jdbc:sqlite:./UserDB.db";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -39,7 +39,7 @@ public class Order{
         return conn;
     }
     public static void selectAll(){
-         String sql = "SELECT id, name, capacity, price FROM RESERVE";
+         String sql = "SELECT id, name, username, email FROM USER";
 
         try (Statement stmt  = connect.createStatement();
              ResultSet rs    = stmt.executeQuery(sql)){
@@ -48,30 +48,33 @@ public class Order{
             while (rs.next()) {
                 System.out.println(rs.getInt("id") +  "\t" +
                                    rs.getString("name") + "\t" +
-                                   rs.getDouble("capacity") + "\t" +
-                                   rs.getDouble("price"));
+                                   rs.getDouble("username") + "\t" +
+                                   rs.getDouble("email"));
 
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
-    public void insert(String name, double capacity, double price) {
-        String sql = "INSERT INTO RESERVE(name,capacity,price) VALUES(?,?,?)";
+       public void insertUser(int id, String name, String username, String password, String email) {
+           String sql = "INSERT INTO USER(id, name, username, password, email) VALUES(?, ?, ?, ?, ?)";
 
-        try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setDouble(2, capacity);
-             pstmt.setDouble(3, price);
-            pstmt.executeUpdate();
-            System.out.println("Inserting " + name + " " + capacity + " " + price);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+           try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
+               pstmt.setInt(1, id);
+               pstmt.setString(2, name);
+               pstmt.setString(3, username);
+               pstmt.setString(4, email);
+               pstmt.setString(5, password);
+               pstmt.executeUpdate();
+               System.out.println("User inserted into the database");
+           } catch (SQLException e) {
+               System.out.println(e.getMessage());
+           }
+       }
+
 
      public void delete(int id) {
-        String sql = "DELETE FROM RESERVE WHERE id = ?";
+        String sql = "DELETE FROM USER WHERE id = ?";
 
         try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
 
@@ -88,15 +91,10 @@ public class Order{
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Order app = new Order();
+        UserDB app = new UserDB();
         app.createNewTable();
 //         insert three new rows
-        app.insert("Raw Materials", 3000, 10) ;
-        app.insert("Semifinished Goods", 4000, 20);
-        app.insert("Finished Goods", 5000, 30);
 //        app.delete(3);
         app.selectAll();
     }
 }
-
-

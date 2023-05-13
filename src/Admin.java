@@ -5,9 +5,15 @@ public class Admin {
     private String username;
     private String password;
     private String email;
-    public Admin(String name, int id, String username, String password, String email) {
+    public Admin() {
         this.name = name;
         this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+    public Admin(String name, String username, String password, String email) {
+        this.name = name;
         this.username = username;
         this.password = password;
         this.email = email;

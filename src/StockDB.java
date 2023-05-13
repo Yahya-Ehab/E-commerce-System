@@ -1,4 +1,5 @@
 package src;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,7 +12,7 @@ public class StockDB {
 
     private static Connection connect;
     public StockDB(){
-         connect = connect();
+        connect = connect();
     }
      /**
      * Connect to a sample database
@@ -84,7 +85,6 @@ public class StockDB {
             System.out.println(e.getMessage());
         }
     }
-
     /**
      * @param args the command line arguments
      */
