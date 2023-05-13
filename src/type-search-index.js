@@ -1,1 +1,0 @@
-typeSearchIndex = [{"p":"src","l":"Admin"},{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"src","l":"EcommerceSystem"},{"p":"src","l":"Item"},{"p":"src","l":"Main"},{"p":"src","l":"Order"},{"p":"src","l":"StockDB"},{"p":"src","l":"User"},{"p":"src","l":"UserDB"},{"p":"src","l":"VoucherDB"}];updateSearchResults();

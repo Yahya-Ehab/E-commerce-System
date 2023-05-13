@@ -1,100 +1,165 @@
 package src;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+
 import java.io.File;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class UserDB {
-
-    private static Connection connect;
-    public UserDB(){
-        connect = connect();
-    }
-     /**
-     * Connect to a sample database
-     */
-     public static void createNewTable(){
-        String url = "jdbc:sqlite:./UserDB.db";
-        String sql = "CREATE TABLE IF NOT EXISTS USER (id integer PRIMARY KEY, name text NOT NULL, username text NOT NULL , email text NOT NULL ) ";
-         try (Connection conn = DriverManager.getConnection(url);
-                Statement stmt = conn.createStatement()) {
-            // create a new table
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+    private ArrayList<User> user;
+    private Connection c;
+    UserDB(int id, String name, int age, String email, String password){
+        user = new ArrayList<User>();
+        try{
+            c = DriverManager.getConnection("jdbc:sqlite:./UserDB.db");
         }
-    }
-    public static Connection connect() {
-        // SQLite connection string
-        String url = "jdbc:sqlite:./UserDB.db";
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return conn;
-    }
-    public static void selectAll(){
-         String sql = "SELECT id, name, username, email FROM USER";
-
-        try (Statement stmt  = connect.createStatement();
-             ResultSet rs    = stmt.executeQuery(sql)){
-
-            // loop through the result set
-            while (rs.next()) {
-                System.out.println(rs.getInt("id") +  "\t" +
-                                   rs.getString("name") + "\t" +
-                                   rs.getDouble("username") + "\t" +
-                                   rs.getDouble("email"));
-
+        catch (Exception e){
+            File f = new File("./UserDB.db");
+            if(!(f.exists())){
+                System.out.println("Couldn't create dataBase");
+                System.out.println(e.getMessage());
             }
-        } catch (SQLException e) {
+            else{
+                System.out.println(e.getMessage());
+            }
+        }
+        try{
+            Statement st = c.createStatement();
+                                                            // User(, , , , , , , ){
+            st.execute("CREATE TABLE IF NOT EXISTS USERS(ID integer primary key, name string,Password String, age INTEGER,email String)");
+
+        }
+        catch (Exception e){
+            System.out.println("Couldn't create table");
+            System.out.println(e.getMessage());
+        }
+        try{
+            String SQL = "SELECT ID, name, Password, age, email from USERS";
+            Statement st = c.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+            while(rs.next()){
+                //User(int ID, String Name, int Age, String G, String , String Email, int loyalityPoints, String password){
+                User u = new User(rs.getInt("id"), rs.getString("Name"), rs.getInt("Age"), rs.getString("email"), rs.getString("password"));
+                user.add(u);
+            }
+
+        }
+        catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
-       public void insertUser(int id, String name, String username, String password, String email) {
-           String sql = "INSERT INTO USER(id, name, username, password, email) VALUES(?, ?, ?, ?, ?)";
+    void refreshUsers(){
+        user.clear();
+        try{
+            String SQL = "SELECT ID, name, Password, age, email, from USERS";
+            Statement st = c.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+            while(rs.next()){
+                User u = new User(rs.getInt("id"), rs.getString("Name"), rs.getInt("Age"), rs.getString("email"), rs.getString("password"));
+                user.add(u);
+            }
 
-           try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
-               pstmt.setInt(1, id);
-               pstmt.setString(2, name);
-               pstmt.setString(3, username);
-               pstmt.setString(4, email);
-               pstmt.setString(5, password);
-               pstmt.executeUpdate();
-               System.out.println("User inserted into the database");
-           } catch (SQLException e) {
-               System.out.println(e.getMessage());
-           }
-       }
-
-
-     public void delete(int id) {
-        String sql = "DELETE FROM USER WHERE id = ?";
-
-        try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
-
-            // set the corresponding param
-            pstmt.setInt(1, id);
-            // execute the delete statement
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
+        }
+        catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        UserDB app = new UserDB();
-        app.createNewTable();
-//         insert three new rows
-//        app.delete(3);
-        app.selectAll();
+
+    public void addNewUser(int ID, String Name, int Age, String Email, String password){
+        User u = new User(ID, Name, Age,Email, password);
+        boolean flag = true;
+        if(this.user != null){
+            for(int i = 0;i<user.size();i++){
+                if(u.getID() == user.get(i).getID()){
+                    flag = false;
+                    break;
+                }
+            }
+        }
+        if(flag){
+            try {
+                user.add(u);
+//                int ID, String Name, int Age, String G, String , String Email, int loyalityPoints, String password){
+//                SELECT ID, name, Password, age, , , email, loyaltyPoints from UsersDB";
+                String SQL = "INSERT INTO USERS (ID, name, Password, age, email) VALUES(?, ?, ?, ?, ?)";
+                PreparedStatement stt = c.prepareStatement(SQL);
+                stt.setInt(1, ID);
+                stt.setString(2, Name);
+                stt.setString(3, password);
+                stt.setString(4, Email);
+
+                stt.executeUpdate();
+//                System.out.println("User added successfully");
+            }
+            catch (Exception e){
+                System.out.println("Didn't work");
+                System.out.println(e.getMessage());
+            }
+        }
+        else{
+            System.out.println("Can't add a User since you have a User with the same ID");
+        }
+    }
+    public void Displayuser(){
+        if(user.size() == 0){
+            System.out.println("There is no user");
+            return;
+        }
+        System.out.printf("%-20s%-20s%-20s%-20s%-20s%-20s%-20s\n", "ID", "Name", "Age", "", "", "Email", "Loyalty points");
+        for(int i = 0;i<user.size();i++){
+            System.out.printf("%-20d%-20s%-20d%-20s%-20s%-20s%-20s\n", user.get(i).getID(), user.get(i).getName(), user.get(i).getAge(), user.get(i).getEmail());
+        }
+    }
+    public boolean checkUserByID(int AdminID){
+        boolean flag = false;
+        if(this.user != null){
+            for(int i = 0;i<user.size();i++){
+                if(AdminID == user.get(i).getID()){
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+
+    public boolean checkUserByName(String name){
+        boolean flag = false;
+        if(this.user != null){
+            for(int i = 0;i<user.size();i++){
+                if(name.equalsIgnoreCase(user.get(i).getName())){
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+    public User getUserByName(String name){
+        if(!checkUserByName(name)){
+            System.out.println("Admin of Name "+ name + " does not exist");
+        }
+        for(int i = 0;i<user.size();i++){
+            if(name.equalsIgnoreCase(user.get(i).getName())){
+                return user.get(i);
+            }
+        }
+        return null;
+    }
+
+    public void DeleteUser(int adminId){
+        if(!checkUserByID(adminId)){
+            System.out.println("Invalid Admin ID");
+            return;
+        }
+        try{
+            String SQL = "DELETE FROM USERS WHERE ID = ?";
+            PreparedStatement st = c.prepareStatement(SQL);
+            st.setInt(1, adminId);
+            st.executeUpdate();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        refreshUsers();
     }
 }

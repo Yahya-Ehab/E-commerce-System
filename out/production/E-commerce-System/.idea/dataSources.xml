@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="StockDB " uuid="dcb5c512-3e6f-4a30-b231-c10d7bf7e374">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\Yahya Ehab\IdeaProjects\E-commerce-System\StockDB.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+      <libraries>
+        <library>
+          <url>file://$PROJECT_DIR$/../../../../sqlite/java/connect/sqlite-jdbc-3.41.2.1.jar</url>
+        </library>
+      </libraries>
+    </data-source>
+  </component>
+</project>

@@ -1,39 +1,32 @@
 package src;
-public class Admin {
-    private String name;
+
+import src.Guest;
+
+
+public class Admin extends Guest {
     private int id;
-    private String username;
+    private String name;
     private String password;
+    private int age;
     private String email;
-    public Admin() {
-        this.name = name;
+    private  Stock stock;
+    private VoucherDB voucherDB;
+
+
+    public Admin(int id, String name,String password, int age, String email) {
         this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-    }
-    public Admin(String name, String username, String password, String email) {
         this.name = name;
-        this.username = username;
         this.password = password;
+        this.age = age;
         this.email = email;
+        stock = new Stock();
+        voucherDB = new VoucherDB();
     }
 
     public int getId() {
         return id;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
     public void setId(int id) {
         this.id = id;
     }
@@ -46,16 +39,53 @@ public class Admin {
         this.name = name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public int getAge() {
+        return age;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
+    public void editProduct(int id, String attribute, String value){
+        stock.UpdateProduct(id,attribute,value);
+    }
+
+    public void addProduct(int id, double price, String name, String category, double discount, int size){
+        stock.AddNewProduct(id,price,name,category,discount,size);
+    }
+    public void removeProduct(int id){
+
+        stock.deleteProduct(id);
+    }
+    public void editVoucher(int id, String attribute, String value){
+        voucherDB.UpdateVoucher(id,attribute,value);
+    }
+
+    public void addVoucher(int id, double discount){
+        voucherDB.addVoucher(id,discount);
+    }
+
+    public void removeVoucher(int id){
+        voucherDB.removeVoucher(id);
+    }
+    public void viewVouchers(){
+        voucherDB.displayVouchers();
+    }
+
+    public void viewStockStatistics(){
+        stock.stockStatistics();
+    }
 }
